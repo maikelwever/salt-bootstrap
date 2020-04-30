@@ -296,6 +296,9 @@ __usage() {
                           for packages available at repo.saltstack.com
     - stable [version]    Install a specific version. Only supported for
                           packages available at repo.saltstack.com
+    - archive [version]   Install a specific version from the archives. 
+                          Only supported for packages available 
+                          at repo.saltstack.com
     - testing             RHEL-family specific: configure EPEL testing repo
     - git                 Install from the head of the master branch
     - git [ref]           Install from any git ref (such as a branch, tag, or
@@ -306,6 +309,7 @@ __usage() {
     - ${__ScriptName} stable
     - ${__ScriptName} stable 2017.7
     - ${__ScriptName} stable 2017.7.2
+    - ${__ScriptName} archive 3000
     - ${__ScriptName} testing
     - ${__ScriptName} git
     - ${__ScriptName} git 2017.7
@@ -581,7 +585,7 @@ if [ "$#" -gt 0 ];then
 fi
 
 # Check installation type
-if [ "$(echo "$ITYPE" | grep -E '(stable|testing|git)')" = "" ]; then
+if [ "$(echo "$ITYPE" | grep -E '(stable|archive|testing|git)')" = "" ]; then
     echoerror "Installation type \"$ITYPE\" is not known..."
     exit 1
 fi
@@ -618,6 +622,10 @@ elif [ "$ITYPE" = "stable" ]; then
             exit 1
         fi
     fi
+elif [ "$ITYPE" = "archive" ]; then
+    STABLE_REV="archive/$1"
+    ITYPE="stable"
+    shift
 fi
 
 # Check for any unparsed arguments. Should be an error.
